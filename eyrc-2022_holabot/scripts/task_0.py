@@ -54,9 +54,9 @@ class TurtleBot:
 			"""Callback function which is called when a new message of type Pose is
 			received by the subscriber."""
 			self.pose = data
-			self.pose.x = round(self.pose.x, 4)
-			self.pose.y = round(self.pose.y, 4)
-			self.pose.theta = round(self.pose.theta, 4)
+			self.pose.x = self.pose.x
+			self.pose.y = self.pose.y
+			self.pose.theta = self.pose.theta
 	
 	def setInitPose(self):
 		""" set the initial postion of turlte """
@@ -96,6 +96,9 @@ class TurtleBot:
 		max = 0
 		euclid = 0
 
+		
+
+
 		while not rospy.is_shutdown():
 			# print(self.pose.theta)			
 			print(self.pose.theta)
@@ -104,34 +107,24 @@ class TurtleBot:
 			# 	vel_msg.angular.z = 0
 			# 	vel_msg.linear.y = 0.5
 			
-			if self.pose.theta < 0 :
+			if self.pose.theta <0 :
 				vel_msg.linear.x = 0
 				vel_msg.angular.z = 0.5
-				# vel_msg.linear.y = 0.5
-
-			self.velocity_publisher.publish(vel_msg)
-			self.rate.sleep()
-
-			# print(self.ArcLength())
-			# pass
-			"""
-			self.velocity_publisher.publish(vel_msg)
-			self.rate.sleep()
+				vel_msg.linear.y = 0
 			
-			stop the turtle when the distance bw the turtle and initail position is maximum
-			euclid = self.euclidean_distance(self.init_pose)
-			if euclid < max :
-				vel_msg.linear.x = 0
-			else:
-				max = euclid
-				continue
-
-			# stop the turtle and rotate it
-			angle = self.stering(self.init_pose)
-			if self.pose.theta > angle:
+			if self.pose.theta > -pi/2 and self.pose.theta < 0:
 				vel_msg.angular.z = 0
-				vel_msg.linear.x = 0.1
-			"""
+				vel_msg.linear.x = 0.5
+
+			if self.pose.y < self.init_pose.y:
+				vel_msg.linear.x = 0
+
+			
+
+			self.velocity_publisher.publish(vel_msg)
+			self.rate.sleep()
+
+			
 
 def main():
 	x = TurtleBot()
