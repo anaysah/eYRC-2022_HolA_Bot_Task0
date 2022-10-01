@@ -84,47 +84,45 @@ class TurtleBot:
 
 	def move(self):
 		vel_msg = Twist()
-		vel_msg.linear.x = 0.5
+		vel_msg.linear.x = 0
 		vel_msg.linear.y = 0
 		vel_msg.linear.z = 0
 
 		# Angular velocity in the z-axis.
 		vel_msg.angular.x = 0
 		vel_msg.angular.y = 0
-		vel_msg.angular.z = 0.5
+		vel_msg.angular.z = 0
 
-		max = 0
-		euclid = 0
-
-		
-
-
-		while not rospy.is_shutdown():
-			# print(self.pose.theta)			
+		stages = [0,0,0]
+		while not rospy.is_shutdown():		
 			print(self.pose.theta)
-			# if self.pose.x < self.init_pose.x and self.pose.y != self.init_pose.y:
-			# 	vel_msg.linear.x = 0
-			# 	vel_msg.angular.z = 0
-			# 	vel_msg.linear.y = 0.5
+			if stages[0] == 0:
+				if self.pose.theta >=0 and self.pose.theta <= pi :
+					vel_msg.linear.x = 0.5
+					vel_msg.angular.z = 0.5
+					# vel_msg.linear.y = 0
+				else:
+					vel_msg.linear.x = 0
+					vel_msg.angular.z = 0.5
+					stages[0] = 1
+					# vel_msg.linear.y = 0
 			
-			if self.pose.theta <0 :
-				vel_msg.linear.x = 0
-				vel_msg.angular.z = 0.5
-				vel_msg.linear.y = 0
-			
-			if self.pose.theta > -pi/2 and self.pose.theta < 0:
-				vel_msg.angular.z = 0
-				vel_msg.linear.x = 0.5
+			elif stages[1] == 0:
+				if self.pose.theta >= -pi/2 and self.pose.theta < 0 and self.pose.theta < 0:
+					vel_msg.angular.z = 0
+					vel_msg.linear.x = 0.5
+					stages[1] = 1
 
-			if self.pose.y < self.init_pose.y:
-				vel_msg.linear.x = 0
+			elif stages[2] == 0:
+				if self.pose.y <= self.init_pose.y:
+					vel_msg.linear.x = 0
 
-			
 
 			self.velocity_publisher.publish(vel_msg)
 			self.rate.sleep()
 
-			
+	# def stopR(self):
+
 
 def main():
 	x = TurtleBot()
