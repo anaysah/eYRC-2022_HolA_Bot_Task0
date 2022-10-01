@@ -45,7 +45,7 @@ class TurtleBot:
 		self.pose_subscriber = rospy.Subscriber('/turtle1/pose',Pose, self.update_pose)
 
 		self.pose = Pose()
-		self.rate = rospy.Rate(30)
+		self.rate = rospy.Rate(60)
 
 		self.init_pose = Pose()
 		self.setInitPose()
@@ -76,25 +76,49 @@ class TurtleBot:
 	def stering(self, goal_pose):
 		return atan2(goal_pose.y - self.pose.y, goal_pose.x - self.pose.x)
 
+	def ArcLength(self):
+		# b = (self.init_pose.x-self.pose.)
+		# a = 90 - tan()
+		# return asin(a)/2
+		pass
+
 	def move(self):
 		vel_msg = Twist()
-		vel_msg.linear.x = 1
+		vel_msg.linear.x = 0.5
 		vel_msg.linear.y = 0
 		vel_msg.linear.z = 0
 
 		# Angular velocity in the z-axis.
 		vel_msg.angular.x = 0
 		vel_msg.angular.y = 0
-		vel_msg.angular.z = 1
+		vel_msg.angular.z = 0.5
 
 		max = 0
 		euclid = 0
 
 		while not rospy.is_shutdown():
+			# print(self.pose.theta)			
+			print(self.pose.theta)
+			# if self.pose.x < self.init_pose.x and self.pose.y != self.init_pose.y:
+			# 	vel_msg.linear.x = 0
+			# 	vel_msg.angular.z = 0
+			# 	vel_msg.linear.y = 0.5
+			
+			if self.pose.theta < 0 :
+				vel_msg.linear.x = 0
+				vel_msg.angular.z = 0.5
+				# vel_msg.linear.y = 0.5
+
+			self.velocity_publisher.publish(vel_msg)
+			self.rate.sleep()
+
+			# print(self.ArcLength())
+			# pass
+			"""
 			self.velocity_publisher.publish(vel_msg)
 			self.rate.sleep()
 			
-			"""stop the turtle when the distance bw the turtle and initail position is maximum"""
+			stop the turtle when the distance bw the turtle and initail position is maximum
 			euclid = self.euclidean_distance(self.init_pose)
 			if euclid < max :
 				vel_msg.linear.x = 0
@@ -102,12 +126,12 @@ class TurtleBot:
 				max = euclid
 				continue
 
-			"""stop the turtle and rotate it"""
+			# stop the turtle and rotate it
 			angle = self.stering(self.init_pose)
 			if self.pose.theta > angle:
 				vel_msg.angular.z = 0
-				vel_msg.linear.x = 1
-			
+				vel_msg.linear.x = 0.1
+			"""
 
 def main():
 	x = TurtleBot()
