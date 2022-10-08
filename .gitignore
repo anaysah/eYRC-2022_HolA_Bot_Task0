@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#temprory files
+eyrc-2022_holabot/ptask_0try.py
+eyrc-2022_holabot/taskp_01p.py
